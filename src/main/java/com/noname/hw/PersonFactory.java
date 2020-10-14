@@ -6,6 +6,8 @@ import java.util.Date;
 
 public class PersonFactory {
 
+    static final String DATE_FORMAT = "M/d/yyyy";
+
     public static Person createPerson(String record) throws ParseException {
 
         // Handle 3 types of delimiters on the input text file
@@ -21,7 +23,7 @@ public class PersonFactory {
     }
 
     private static Date getDateOfBirth(String date) throws ParseException {
-        SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
+        SimpleDateFormat formatter = new SimpleDateFormat(DATE_FORMAT);
         return formatter.parse(date);
     }
 

@@ -1,5 +1,6 @@
 package com.noname.hw;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Person {
@@ -40,12 +41,14 @@ public class Person {
 
     @Override
     public String toString() {
+        SimpleDateFormat formatter = new SimpleDateFormat("M/d/yyyy");
+
         return "Person{" +
                 "firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", gender=" + gender +
                 ", favoriteColor='" + favoriteColor + '\'' +
-                ", dateOfBirth=" + dateOfBirth +
+                ", dateOfBirth=" + formatter.format(dateOfBirth) +
                 '}';
     }
 }
