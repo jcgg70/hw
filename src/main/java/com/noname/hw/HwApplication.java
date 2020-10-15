@@ -1,17 +1,29 @@
 package com.noname.hw;
 
+import com.noname.hw.sort.BirthDateComparator;
+import com.noname.hw.sort.GenderComparator;
+import com.noname.hw.sort.LastNameComparator;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 @SpringBootApplication
+@RestController
+@RequestMapping("/records")
 public class HwApplication {
+
+	List<Person> personList = new ArrayList<>();
 
 	public static void main(String[] args) throws ParseException, IOException {
 		SpringApplication.run(HwApplication.class, args);
@@ -22,12 +34,14 @@ public class HwApplication {
 			System.exit(1);
 		}
 
+		// read file passed as first argument
 		File file = new File(args[0]);
 		BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
 
 		List<Person> personList = new ArrayList<>();
 		String record;
 		while ((record = bufferedReader.readLine()) != null) {
+			// Use simple factory to create a person object from data line record
 			Person person = PersonFactory.createPerson(record);
 
 			// populate person object into a list
@@ -35,42 +49,53 @@ public class HwApplication {
 		}
 
 		if (!personList.isEmpty()) {
-
-			// Sort by gender (females before males) then by last name ascending
-			Comparator<Person> genderComparator = Comparator.comparing(Person::getGender)
-					.thenComparing(Person::getLastName)
-					.reversed();
-
-			// Sorted by birth date, ascending
-			Comparator<Person> birthDateComparator = Comparator.comparing(Person::getDateOfBirth);
-
-			// Sorted by last name, descending
-			Comparator<Person> lastNameComparator = Comparator.comparing(Person::getLastName)
-					.reversed();
-
-			//
+			// Unsorted original list of records collected from input file
 			System.out.println("----------| Unsorted |----------");
 			personList.forEach(System.out::println);
 
-			//
+			// Sort by gender (females before males) then by last name ascending
 			System.out.println("----------| Sorted by Gender |----------");
-			Collections.sort(personList, genderComparator);
+			Collections.sort(personList, new GenderComparator());
 			personList.forEach(System.out::println);
 
-			//
+			// Sorted by birth date, ascending
 			System.out.println("----------| SORTED by Birth Date |----------");
-			Collections.sort(personList, birthDateComparator);
+			Collections.sort(personList, new BirthDateComparator());
 			personList.forEach(System.out::println);
 
-			//
+			// Sorted by last name, descending
 			System.out.println("----------| Sorted by Last Name |----------");
-			Collections.sort(personList, lastNameComparator);
+			Collections.sort(personList, new LastNameComparator());
 			personList.forEach(System.out::println);
-
 		}
-
-
-
 	}
 
+	// POST /records - Post a single data line in any of the 3 formats supported
+	@PostMapping
+	public ResponseEntity<Person> post(@RequestBody String record) throws ParseException {
+		Person person = PersonFactory.createPerson(record);
+		personList.add(person);
+		return new ResponseEntity<>(person, HttpStatus.OK);
+	}
+
+	// GET /records/gender - Gets records sorted by gender
+	@GetMapping("/gender")
+	public @ResponseBody ResponseEntity<List<Person>> getRecordsSortedByGender() {
+		Collections.sort(personList, new GenderComparator());
+		return new ResponseEntity<>(personList, HttpStatus.OK);
+	}
+
+	// GET /records/birthdate - Gets records sorted by birth date
+	@GetMapping("/birthdate")
+	public @ResponseBody ResponseEntity<List<Person>> getRecordsSortedByBirthDate() {
+		Collections.sort(personList, new BirthDateComparator());
+		return new ResponseEntity<>(personList, HttpStatus.OK);
+	}
+
+	// GET /records/name - Gets records sorted by last name
+	@GetMapping("/name")
+	public @ResponseBody ResponseEntity<List<Person>> getRecordsSortedByName() {
+		Collections.sort(personList, new LastNameComparator());
+		return new ResponseEntity<>(personList, HttpStatus.OK);
+	}
 }

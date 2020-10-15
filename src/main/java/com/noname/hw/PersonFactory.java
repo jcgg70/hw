@@ -7,12 +7,12 @@ import java.util.Date;
 public class PersonFactory {
 
     static final String DATE_FORMAT = "M/d/yyyy";
+    static final String DELIMITERS = "[ |, ]+"; // supported delimiters
 
     public static Person createPerson(String record) throws ParseException {
 
         // Handle 3 types of delimiters on the input text file
-        String delims = "[ |, ]+";
-        String[] tokens = record.split(delims);
+        String[] tokens = record.split(DELIMITERS);
 
         String firstName = tokens[0];
         String lastName = tokens[1];
