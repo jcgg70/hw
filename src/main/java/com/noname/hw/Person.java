@@ -11,7 +11,7 @@ public class Person {
     private String favoriteColor;
     private Date dateOfBirth;
 
-    public Person(String firstName, String lastName, Gender gender, String favoriteColor, Date dateOfBirth) {
+    public Person(String lastName, String firstName, Gender gender, String favoriteColor, Date dateOfBirth) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.gender = gender;

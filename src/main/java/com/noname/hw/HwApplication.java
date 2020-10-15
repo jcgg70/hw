@@ -3,6 +3,8 @@ package com.noname.hw;
 import com.noname.hw.sort.BirthDateComparator;
 import com.noname.hw.sort.GenderComparator;
 import com.noname.hw.sort.LastNameComparator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.http.HttpStatus;
@@ -23,6 +25,8 @@ import java.util.List;
 @RequestMapping("/records")
 public class HwApplication {
 
+	static Logger logger = LoggerFactory.getLogger(HwApplication.class);
+
 	List<Person> personList = new ArrayList<>();
 
 	public static void main(String[] args) throws ParseException, IOException {
@@ -30,7 +34,7 @@ public class HwApplication {
 
 		// first check to see if the program was run with the command line argument
 		if (args.length < 1) {
-			System.out.println("Error - Usage: java <input_file>");
+			logger.info("Error - Usage: java <input_file>");
 			System.exit(1);
 		}
 
@@ -50,23 +54,23 @@ public class HwApplication {
 
 		if (!personList.isEmpty()) {
 			// Unsorted original list of records collected from input file
-			System.out.println("----------| Unsorted |----------");
-			personList.forEach(System.out::println);
+			logger.info("----------| Unsorted |----------");
+			personList.forEach(myPojo -> logger.info(myPojo.toString()));
 
 			// Sort by gender (females before males) then by last name ascending
-			System.out.println("----------| Sorted by Gender |----------");
+			logger.info("----------| Sorted by Gender (females before males) then by last name ascending |----------");
 			Collections.sort(personList, new GenderComparator());
-			personList.forEach(System.out::println);
+			personList.forEach(myPojo -> logger.info(myPojo.toString()));
 
 			// Sorted by birth date, ascending
-			System.out.println("----------| SORTED by Birth Date |----------");
+			logger.info("----------| SORTED by Birth Date ascending |----------");
 			Collections.sort(personList, new BirthDateComparator());
-			personList.forEach(System.out::println);
+			personList.forEach(myPojo -> logger.info(myPojo.toString()));
 
 			// Sorted by last name, descending
-			System.out.println("----------| Sorted by Last Name |----------");
+			logger.info("----------| Sorted by Last Name descending |----------");
 			Collections.sort(personList, new LastNameComparator());
-			personList.forEach(System.out::println);
+			personList.forEach(myPojo -> logger.info(myPojo.toString()));
 		}
 	}
 
